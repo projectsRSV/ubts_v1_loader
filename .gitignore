@@ -2,6 +2,7 @@ Thumbs.db
 [Bb]in/
 [Dd]ebug/
 [Rr]elease/
+Xmega_loader_128A1U/
 *.obj
 *.exe
 *.pdb
@@ -22,9 +23,10 @@ Thumbs.db
 *.log
 *.hex
 *.atsln
-
+*.eep
 *.lib
 *.sbr
+*.bat
 obj/
 
 _ReSharper*/

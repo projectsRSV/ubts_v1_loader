@@ -3,6 +3,7 @@ Thumbs.db
 [Dd]ebug/
 [Rr]elease/
 Xmega_loader_128A1U/
+.vs/
 *.obj
 *.exe
 *.pdb

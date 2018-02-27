@@ -41,9 +41,10 @@ void greenBLink();
 fpFanLed lightPtrTable[] = {greenBLink};
 
 int main(void){
-	uint32_t count=0;
-	uint8_t endVar=0;
-	uint8_t wasWrite=0;
+	static uint32_t count;
+	static uint8_t endVar = 0x01;
+	static uint8_t wasWrite;
+	const uint32_t COUNT = 700000;
 	
 	init_all();
 	EEPROM_FlushBuffer();
@@ -60,8 +61,8 @@ int main(void){
 			case WRITE_Pr:{
 				loaderAction=0x00;
 				writePr();
-				endVar=0x00;
-				wasWrite=1;
+				endVar = 0x01;
+				wasWrite = 1;
 				break;
 			}
 			case WRITE_Sn:{
@@ -73,13 +74,13 @@ int main(void){
 				loaderAction=0x00;
 				readSn();
 				_delay_ms(1);
-				if (!wasWrite) endVar=0x01;
-				else count = 2000000;
+				if (!wasWrite) endVar = 0x00;
+				else count = COUNT - 200000;
 				break;
 			}
 			default:{
-				if (count++ == 2200000){
-					if (!endVar) {
+				if (count++ == COUNT){
+					if (endVar) {
 						EEPROM_EnableMapping();
 						funcPtr = (void(*)())0x0000;
 						EIND = 0;

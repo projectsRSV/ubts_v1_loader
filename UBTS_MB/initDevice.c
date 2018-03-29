@@ -80,6 +80,16 @@ void init_all(){
 	spi_resetRegs();
 	usart_init(&USARTE0, BAUD_RATE);
 	
+	usart_rx_disable(&USARTC0);
+	usart_rx_disable(&USARTD0);
+	usart_tx_disable(&USARTC0);
+	usart_tx_disable(&USARTD0);
+	
+	twi_init(&TWIC);		//temp board
+	twi_init(&TWID);		//temp pa0, pa1
+	twi_init(&TWIE);		//ina sensors
+	twi_init(&TWIF);		//temp pa2, pa3
+	
 	reset_w5200();
 	w5200_init();
 	sei();

@@ -7,6 +7,7 @@
 #include "usart.h"
 #include <util/delay.h>
 #include "w5200.h"
+#include "twi.h"
 
 void init_all(void);
 void init_clock(void);

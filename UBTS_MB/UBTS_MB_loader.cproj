@@ -159,6 +159,12 @@
     <Compile Include="defines.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="twi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="twi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="w5200_defines.h">
       <SubType>compile</SubType>
     </Compile>

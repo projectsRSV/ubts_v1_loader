@@ -63,6 +63,7 @@ int main(void){
 				writePr();
 				endVar = 0x01;
 				wasWrite = 1;
+				count = 0;
 				break;
 			}
 			case WRITE_Sn:{
@@ -99,14 +100,22 @@ void writePr(){
 	uint8_t loaderStatus=0;
 
 	while(1){
-		requestToPC(loaderStatus,pageCounter,Flash_Page_Size/2);
-		_delay_ms(20);
+		requestToPC(loaderStatus, pageCounter, Flash_Page_Size/2);
+		//requestToPC(0xff, pageCounter, Flash_Page_Size/2);
+		
+		_delay_ms(25);
 		if(loaderStatus) break;
-		loaderStatus=responseFromPC(&pageCounter,tempBuffFlashPage,Flash_Page_Size,0);
-		if (loaderStatus==Last_Pack || loaderStatus==Next_Pack){
-			writeFlash(pageAddress,tempBuffFlashPage);
+		loaderStatus = responseFromPC(&pageCounter, tempBuffFlashPage, Flash_Page_Size,0);
+		if (loaderStatus == Last_Pack || loaderStatus == Next_Pack){
+			writeFlash(pageAddress, tempBuffFlashPage);
 			pageCounter++;
-			pageAddress=pageCounter * Flash_Page_Size;
+			pageAddress = pageCounter * Flash_Page_Size;
+		}
+		else {
+			requestToPC(loaderStatus, pageCounter, Flash_Page_Size/2);
+			//loaderStatus = 0xff;
+			//requestToPC(loaderStatus, pageCounter, Flash_Page_Size/2);
+			break;
 		}
 	}
 }
@@ -134,10 +143,10 @@ void writeSn(){
 	uint8_t loaderStatus=0;
 
 	while(1){
-		requestToPC(loaderStatus,pageCounter,Flash_Page_Size/2);
+		requestToPC(loaderStatus, pageCounter, Flash_Page_Size/2);
 		_delay_ms(20);
 		if(loaderStatus) break;
-		loaderStatus=responseFromPC(&pageCounter,tempBuffFlashPage,Flash_Page_Size,1);
+		loaderStatus=responseFromPC(&pageCounter, tempBuffFlashPage, Flash_Page_Size,1);
 		if (loaderStatus==Last_Pack || loaderStatus==Next_Pack){
 			writeEEPROM(tempBuffFlashPage);
 		}
@@ -179,17 +188,17 @@ uint8_t responseFromPC(uint16_t* pageCounter,uint8_t* buff,uint16_t pageSize,uin
 	do{
 		switch (state){
 			case 0:{
-				state=commandDecoder(3,buffer);
+				state = commandDecoder(3, buffer);
 				count=3;
+				break;
 			}
-			break;
 			case 1:{
 				status_loader=buffer[count++];
-				*pageCounter=buffer[count++];						//page counter low byte
-				*pageCounter |=(uint16_t)(buffer[count++]<<8);		//page counter upper byte
+				*pageCounter=buffer[count++];							//page counter low byte
+				*pageCounter |= (uint16_t)(buffer[count++] << 8);		//page counter upper byte
 				state=2;
+				break;
 			}
-			break;
 			case 2:{
 				type_byte ^= 0x01;
 				if (lengthBuff != pageSize){
@@ -208,8 +217,8 @@ uint8_t responseFromPC(uint16_t* pageCounter,uint8_t* buff,uint16_t pageSize,uin
 						exit = true;
 					}
 				}
+				break;
 			}
-			break;
 			default: {
 				status_loader = MEM_Err;
 				exit = true;
@@ -220,8 +229,8 @@ uint8_t responseFromPC(uint16_t* pageCounter,uint8_t* buff,uint16_t pageSize,uin
 	return status_loader;
 }
 void requestToPC(uint8_t loaderStatus, uint16_t pageCounter,uint16_t pageSize){
-	uint8_t buff[]={0xfe,0xfe,loaderStatus,pageCounter,pageCounter>>8,pageSize,pageSize>>8};
-	w5200_sendData(MAIN_CH,buff,0x07);
+	uint8_t buff[]={0xfe, 0xfe, loaderStatus, pageCounter, pageCounter>>8, pageSize, pageSize>>8};
+	w5200_sendData(MAIN_CH, buff, 0x07);
 }
 uint8_t commandDecoder(uint8_t length, uint8_t* buff){
 	uint8_t counter=0;
@@ -230,37 +239,37 @@ uint8_t commandDecoder(uint8_t length, uint8_t* buff){
 		switch (buff[i]){
 			case 'S':{
 				if(counter==0x02) counter++;
+				break;
 			}
-			break;
 			case 'N':{
 				if(counter==0x03) counter++;
+				break;
 			}
-			break;
 			case 'G':{
 				if(counter==0x02) counter++;
+				break;
 			}
-			break;
 			case 'E':{
 				if(counter==0x03) counter++;
+				break;
 			}
-			break;
 			case 'T':{
 				if(counter==0x04) counter++;
+				break;
 			}
-			break;
 			case 'P':{
 				if(counter==0x02) counter++;
+				break;
 			}
-			break;
 			case 0xfe:{
 				counter++;
+				break;
 			}
-			break;
 			case 0x63:{
-				if (counter==2) return 1;
+				if (counter==2) return 0x01;
 				else return -1;
+				break;
 			}
-			break;
 			case 0xff:{
 				if (counter==0x04){
 					return WRITE_Sn;
@@ -271,9 +280,12 @@ uint8_t commandDecoder(uint8_t length, uint8_t* buff){
 				if (counter==0x03){
 					return WRITE_Pr;
 				}
+				break;
 			}
-			break;
-			default: counter=0x00;
+			default: {
+				counter=0x00;
+				break;
+			}
 		}
 	}
 	return 0x00;

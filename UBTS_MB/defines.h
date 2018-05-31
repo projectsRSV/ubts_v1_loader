@@ -6,6 +6,8 @@
 //#define spi_buadrate		2000000
 
 #define MAIN_CH			0
+#define MAIN_PORT		5000
+
 
 #define CS_ON				PORTE.OUTCLR=PIN4_bm
 #define CS_OFF				PORTE.OUTSET=PIN4_bm
@@ -42,12 +44,18 @@
 #define   MEM_Err                          0xFF
 #define   Last_Pack                        0x01
 #define   Next_Pack                        0x00
+
+
+#define  STAY_IN_LOADER						0xaa
+#define  CRASH_WRITE						0xcc
+#define  GO_FROM_LOADER						0xbb
+#define  SUCC_WRITE							0xdd
 //****************************************************************************//
 //******************************* For System Board ***************************//
 //****************************************************************************//
 #define Boot_Reset_Address				BOOT_SECTION_START
-#define Flash_Page_Size					(APP_SECTION_PAGE_SIZE)
-#define Sn_Device_Address				(Boot_Reset_Address-Flash_Page_Size)
+#define Flash_Page_Size					APP_SECTION_PAGE_SIZE
+#define Sn_Device_Address				Boot_Reset_Address - Flash_Page_Size
 
 #define EEPR_PAGE_ADDR					1
 

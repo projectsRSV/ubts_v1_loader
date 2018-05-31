@@ -47,10 +47,10 @@ void init_port(){
 	//PORTCFG.CLKEVOUT=PORTCFG_CLKOUT_PE7_gc;
 	PORTF.DIR=0xff;
 	PORTF.OUT=0x00;
-	PORTF.INTCTRL = PORT_INT0LVL_LO_gc;			//set input for interrupt from w5200
-	PORTF.DIRCLR=PIN2_bm;						
-	PORTF.INT0MASK=PIN2_bm;
-	PORTF.PIN2CTRL=PORT_OPC_PULLUP_gc | PORT_ISC_LEVEL_gc;
+	//PORTF.INTCTRL = PORT_INT0LVL_MED_gc;			//set input for interrupt from w5200
+	//PORTF.DIRCLR=PIN2_bm;						
+	//PORTF.INT0MASK=PIN2_bm;
+	//PORTF.PIN2CTRL=PORT_OPC_PULLUP_gc | PORT_ISC_LEVEL_gc;
 	PORTF.OUTSET=PIN3_bm;						//set 1 for reset w5200
 	PORTF.PIN3CTRL=PORT_OPC_PULLUP_gc;			//reset w5200
 	

@@ -17,7 +17,8 @@ static inline void spi_enable(SPI_t *spi){
 }
 
 static inline void spi_enable_master_mode(SPI_t *spi){
-	spi->CTRL |= SPI_MASTER_bm|SPI_MODE_0_gc;
+	spi->CTRL |= SPI_MASTER_bm | SPI_MODE_0_gc;
+	spi->INTCTRL = 0;
 }
 
 static inline void spi_disable(SPI_t *spi){
@@ -26,7 +27,7 @@ static inline void spi_disable(SPI_t *spi){
 
 static inline uint8_t spi_sendData(SPI_t *spi, uint8_t data){
 	spi->DATA = data;
-	while((spi->STATUS&SPI_IF_bm) != SPI_IF_bm) {}
+	while((spi->STATUS & SPI_IF_bm) != SPI_IF_bm) {};
 	return spi->DATA;
 }
 

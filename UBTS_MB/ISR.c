@@ -2,18 +2,17 @@
 #include "defines.h"
 
 
-fpStatusLed blinkPtrTable[] ={utils_fastBlink, utils_middleBlink, utils_slowBlink};
 
 void ISR_init(void){
 	CCP = CCP_IOREG_gc;
-	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_IVSEL_bm;
+	PMIC.CTRL = PMIC_IVSEL_bm;
 }
 
 /***************interrupt vectors******************/
-ISR(PORTF_INT0_vect){
+/*ISR(PORTF_INT0_vect){
 	uint8_t ch,interReg,socketInt;
 
-blinkFuncPtr = (fpStatusLed)(blinkPtrTable[0]);				//speed of led blinking
+//blinkFuncPtr = (fpStatusLed)(blinkPtrTable[0]);				//speed of led blinking
 
 	interReg = w5200_readInterChann()&0x01;
 	while(interReg){
@@ -40,29 +39,5 @@ blinkFuncPtr = (fpStatusLed)(blinkPtrTable[0]);				//speed of led blinking
 			}
 		}
 	}
-}
+}*/
 
-void utils_fastBlink(){
-	static uint16_t i=0;
-	if (i++ == 0x3fff){
-		TGL_RED_LED_left;
-		TGL_RED_LED_right;
-		i=0;
-	}
-}
-void utils_middleBlink(){
-	static uint16_t i=0;
-	if (i++ == 0x7fff){
-		TGL_RED_LED_left;
-		TGL_RED_LED_right;
-		i=0;
-	}
-}
-void utils_slowBlink(){
-	static uint16_t i=0;
-	if (i++ == 0xffff){
-		TGL_RED_LED_left;
-		TGL_RED_LED_right;
-		i=0;
-	}
-}
